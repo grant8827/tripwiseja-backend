@@ -1,10 +1,10 @@
 [phases.setup]
-nixPkgs = ["dotnet-sdk_8"]
+nixPkgs = ["dotnet-sdk_8", "dotnet-runtime_8"]
 
 [phases.build]
 cmds = [
     "dotnet restore TripWiseJa.sln",
-    "dotnet publish src/TripWiseJa.API/TripWiseJa.API.csproj -c Release -o publish"
+    "dotnet publish src/TripWiseJa.API/TripWiseJa.API.csproj -c Release -o publish --self-contained false"
 ]
 
 [start]
