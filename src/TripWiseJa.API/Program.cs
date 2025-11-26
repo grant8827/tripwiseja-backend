@@ -39,8 +39,12 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
     options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10MB
 });
 
-// Log that we're using port 5001 to avoid macOS AirPlay conflict
+// Configure port for Railway (uses PORT env variable) or default to 5001 locally
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5001";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 Console.WriteLine("🚀 Backend API starting...");
+Console.WriteLine($"🌐 Listening on port: {port}");
 Console.WriteLine($"🌍 CORS enabled for frontend: https://tripwiseja-frontend-production.up.railway.app");
 
 var app = builder.Build();
