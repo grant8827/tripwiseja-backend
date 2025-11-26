@@ -1,1 +1,1 @@
-web: dotnet publish/TripWiseJa.API.dll
+web: ./publish/TripWiseJa.API
