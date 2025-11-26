@@ -40,7 +40,8 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
 });
 
 // Log that we're using port 5001 to avoid macOS AirPlay conflict
-Console.WriteLine("🚀 Backend will run on port 5001 (port 5000 is used by macOS AirPlay)");
+Console.WriteLine("🚀 Backend API starting...");
+Console.WriteLine($"🌍 CORS enabled for frontend: https://tripwiseja-frontend-production.up.railway.app");
 
 var app = builder.Build();
 
