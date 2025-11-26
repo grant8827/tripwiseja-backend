@@ -1,1 +1,1 @@
-web: cd /app/out && ./TripWiseJa.API
+web: ./publish/TripWiseJa.API
