@@ -47,13 +47,21 @@ builder.Services.AddCors(options =>
         var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? 
                          "https://tripwiseja-frontend-production.up.railway.app";
         allowedOrigins.Add(frontendUrl);
+        allowedOrigins.Add("https://tripwiseja-frontend-production.up.railway.app");
         
-        policy.WithOrigins(allowedOrigins.ToArray())
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials()
-              .WithExposedHeaders("*")
-              .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
+        if (builder.Environment.IsProduction())
+        {
+            policy.WithOrigins(allowedOrigins.ToArray())
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        }
+        else
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        }
     });
 });
 
