@@ -22,6 +22,56 @@ namespace TripWiseJa.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TripWiseJa.Domain.Entities.Booking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CheckInDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CheckOutDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("NumberOfGuests")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SpecialRequests")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<decimal?>("TotalPrice")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Bookings");
+                });
+
             modelBuilder.Entity("TripWiseJa.Domain.Entities.Location", b =>
                 {
                     b.Property<int>("Id")
@@ -223,6 +273,25 @@ namespace TripWiseJa.Infrastructure.Migrations
                     b.ToTable("Vendors");
                 });
 
+            modelBuilder.Entity("TripWiseJa.Domain.Entities.Booking", b =>
+                {
+                    b.HasOne("TripWiseJa.Domain.Entities.Location", "Location")
+                        .WithMany("Bookings")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TripWiseJa.Domain.Entities.User", "User")
+                        .WithMany("Bookings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TripWiseJa.Domain.Entities.Location", b =>
                 {
                     b.HasOne("TripWiseJa.Domain.Entities.Vendor", "Vendor")
@@ -254,11 +323,15 @@ namespace TripWiseJa.Infrastructure.Migrations
 
             modelBuilder.Entity("TripWiseJa.Domain.Entities.Location", b =>
                 {
+                    b.Navigation("Bookings");
+
                     b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("TripWiseJa.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Bookings");
+
                     b.Navigation("Reviews");
                 });
 

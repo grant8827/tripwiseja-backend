@@ -14,6 +14,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<Vendor> Vendors => Set<Vendor>();
+    public DbSet<Booking> Bookings => Set<Booking>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -56,6 +57,20 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                   .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(e => new { e.UserId, e.LocationId }).IsUnique();
+        });
+
+        // Booking configuration
+        modelBuilder.Entity<Booking>(entity =>
+        {
+            entity.HasOne(b => b.User)
+                  .WithMany(u => u.Bookings)
+                  .HasForeignKey(b => b.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(b => b.Location)
+                  .WithMany(l => l.Bookings)
+                  .HasForeignKey(b => b.LocationId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

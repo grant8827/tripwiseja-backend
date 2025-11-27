@@ -29,4 +29,5 @@ public class User
 
     // Navigation properties
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 }

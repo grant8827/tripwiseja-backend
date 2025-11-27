@@ -55,4 +55,5 @@ public class Location
     [ForeignKey("VendorId")]
     public virtual Vendor? Vendor { get; set; }
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 }

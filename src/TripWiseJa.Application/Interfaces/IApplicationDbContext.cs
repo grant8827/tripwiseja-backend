@@ -9,6 +9,7 @@ public interface IApplicationDbContext
     DbSet<Location> Locations { get; }
     DbSet<Review> Reviews { get; }
     DbSet<Vendor> Vendors { get; }
+    DbSet<Booking> Bookings { get; }
     
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
