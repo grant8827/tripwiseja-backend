@@ -16,6 +16,22 @@ public class VendorsController : ControllerBase
         _context = context;
     }
 
+    [HttpGet("all")]
+    public async Task<ActionResult<object>> GetAllVendors()
+    {
+        var vendors = await _context.Vendors
+            .Select(v => new {
+                v.Id,
+                v.Email,
+                v.BusinessName,
+                v.ContactName,
+                v.IsApproved,
+                v.CreatedAt
+            })
+            .ToListAsync();
+        return Ok(vendors);
+    }
+
     [HttpPost("register")]
     public async Task<ActionResult<object>> RegisterVendor(Vendor vendor)
     {
