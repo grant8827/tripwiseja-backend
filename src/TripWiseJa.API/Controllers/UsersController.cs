@@ -34,39 +34,56 @@ public class UsersController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<object>> Register([FromBody] UserRegisterDto dto)
     {
-        // Check if user already exists
-        var existingUser = await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == dto.Email);
-
-        if (existingUser != null)
+        try
         {
-            return BadRequest("User with this email already exists");
+            Console.WriteLine($"📝 Registration attempt for: {dto.Email}");
+            
+            // Check if user already exists
+            var existingUser = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == dto.Email);
+
+            if (existingUser != null)
+            {
+                Console.WriteLine($"❌ User already exists: {dto.Email}");
+                return BadRequest("User with this email already exists");
+            }
+
+            // Hash password
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            Console.WriteLine($"🔐 Password hashed for: {dto.Email}");
+
+            var user = new User
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                PasswordHash = hashedPassword,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            _context.Users.Add(user);
+            Console.WriteLine($"➕ User added to context: {dto.Email}");
+            
+            var result = await _context.SaveChangesAsync();
+            Console.WriteLine($"💾 SaveChanges result: {result} rows affected");
+            Console.WriteLine($"✅ User registered successfully: {user.Id} - {dto.Email}");
+
+            return Ok(new
+            {
+                user.Id,
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                Message = "Registration successful"
+            });
         }
-
-        // Hash password
-        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-
-        var user = new User
+        catch (Exception ex)
         {
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Email = dto.Email,
-            PasswordHash = hashedPassword,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
-        return Ok(new
-        {
-            user.Id,
-            user.FirstName,
-            user.LastName,
-            user.Email,
-            Message = "Registration successful"
-        });
+            Console.WriteLine($"❌ Registration error: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            return StatusCode(500, $"Registration failed: {ex.Message}");
+        }
     }
 
     [HttpPost("login")]

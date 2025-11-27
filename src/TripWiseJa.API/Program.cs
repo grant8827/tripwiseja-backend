@@ -13,17 +13,33 @@ builder.Services.AddSwaggerGen();
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? 
                       builder.Configuration.GetConnectionString("DefaultConnection");
 
+Console.WriteLine($"🔍 Raw DATABASE_URL: {(string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DATABASE_URL")) ? "Not set" : "Set")}");
+
 // Convert Railway DATABASE_URL format to connection string if needed
 if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgresql://"))
 {
-    var uri = new Uri(connectionString);
-    var host = uri.Host;
-    var dbPort = uri.Port;
-    var database = uri.AbsolutePath.Trim('/');
-    var username = uri.UserInfo.Split(':')[0];
-    var password = uri.UserInfo.Split(':')[1];
-    
-    connectionString = $"Host={host};Port={dbPort};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+    try
+    {
+        var uri = new Uri(connectionString);
+        var host = uri.Host;
+        var dbPort = uri.Port;
+        var database = uri.AbsolutePath.Trim('/');
+        var userInfo = uri.UserInfo.Split(':');
+        var username = userInfo[0];
+        var password = userInfo.Length > 1 ? userInfo[1] : "";
+        
+        connectionString = $"Host={host};Port={dbPort};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+        Console.WriteLine($"✅ Converted DATABASE_URL to connection string");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error parsing DATABASE_URL: {ex.Message}");
+        throw;
+    }
+}
+else if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("No database connection string found. Set DATABASE_URL environment variable.");
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
