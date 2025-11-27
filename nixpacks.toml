@@ -4,8 +4,8 @@ nixPkgs = ["dotnet-sdk_8"]
 [phases.build]
 cmds = [
     "dotnet restore TripWiseJa.sln",
-    "dotnet publish src/TripWiseJa.API/TripWiseJa.API.csproj -c Release -o publish --no-self-contained -r linux-x64"
+    "dotnet publish src/TripWiseJa.API/TripWiseJa.API.csproj -c Release -o publish --self-contained true -r linux-x64"
 ]
 
 [start]
-cmd = "dotnet ./publish/TripWiseJa.API.dll"
+cmd = "./publish/TripWiseJa.API"
